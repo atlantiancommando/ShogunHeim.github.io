@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html>
+    <title>Casino Royale</title>
+    <head>
+        <link rel="icon" href="Deck/Background & Icon/icon.jpg">
+        <link rel="stylesheet" href="styling.css">
+    </head>
+<body>
+<script>
+//variables are listed here, cards/scores/points/bets//
+
+//Extra note: I have gotten insight and assistance from Caleb to conplete this project as a result.
+//a lot of the methods used to achieve the final goal were a mix of my styling and coding with Caleb instructing me along the way.
+//That is why I will be giving him credit here so as to clear any possible misunderstandings.
+//However, my use of his code meant I had to actually learn how the code overall functioned and I added my own flair from my former code.
+
+
+var playerCardNum = 0;
+var dealerCardNum = 0;
+var playerCard = 0;
+var dealerCard = 0;
+var playerScore = 0;
+var dealerScore = 0;
+var playerPoints = 0;
+var dealerPoints = 0;
+var playerBet = 0;
+var playerMoney = 0;
+
+//Lists the variables and tells the computer that the stated variable is not intended to be modified.
+//At least that is how I understood it. We're placing the image variables here for the sake of keeping organized.
+const deck = ["Spades", "Clubs", "Hearts", "Diamonds",]
+
+
+
+    document.getElementById("playerCardDisplay").value = "";
+    document.getElementById("playerScoreDisplay").value = "";
+    document.getElementById("dealerCardDisplay").value = "";
+    document.getElementById("dealerScoreDisplay").value = "";
+    document.getElementById("playerPointsDisplay").value = "";
+    document.getElementById("dealerPointsDisplay").value = "";
+    document.getElementById("nextGameButton").style.visibility = "hidden";
+
+    for (i=1; i <=10; i++) {
+    document.getElementById("playerCardImage" + i).src = "deck/backside/backside1.png";
+        if (i == 10) {
+        for (i=1; i <=10; i++) {
+        document.getElementById("dealerCardImage" + i).src = "deck/backside/backside1.png";
+        }
+    }
+}
+
+
+//Now that we have the actual code to find the player score, now we need to actually set up how this happens.//
+//This function firstly defines what displayCard is.
+function displayCard(cardPicked, pickedBy) {
+
+if (pickedBy == "playerCard") {
+    playerCardNum++;
+} else {
+    dealerCardNum++;
+}
+
+
+//Selects a 'deck' from the four variables previously stated. On line 32 for reference.
+var deck = decks[Math.floor(Math.random()*4)]
+
+if (pickedBy == "playerCard") {
+    document.getElementById(pickedBy + "Image" + playerCardNum).src = "deck/" + deck + "/" + cardPicked + ".png";
+    } else {
+        document.getElementById(pickedBy + "Image" + dealerCardNum).src = "deck/" + deck + "/" + cardPicked + ".png";
+    }
+
+//Because we are referencing the number of the card in our deck folder, we have to reference its number.
+//We numbered King/Queen/Jack & Ace differently from 2-10 because they have a solid value of 10 each.
+//With Ace being a special number that could be either 1 or 11.
+//Therefore, we change Ace to 1 because we're not going to input an 11 value for now.
+    if (cardPicked == 13) {
+        document.getElementById(pickedBy + "Display").value = "King of " + deck;
+    } else if (cardPicked == 12) {
+        document.getElementById(pickedBy + "Display").value = "Queen of " + deck;
+    } else if (cardPicked == 11) {
+        document.getElementById(pickedBy + "Display").value = "Jack of " + deck;
+    } else if (cardPicked == 1) {
+        document.getElementById(pickedBy + "Display").value = "Ace of " + deck;
+    } else {
+        document.getElementById(pickedBy + "Display").value = cardPicked + " of " + deck;
+    }
+}
+
+//Picking card function//
+function pickCard() {
+
+return Math.floor(Math.random()*13)+1
+
+}
+
+//This function is supposed to link the player cards that were set out and then base its calculations based off of those
+function playerHit() {
+    displayCard(playerCard, "playerCard")
+        if (playerCard > 10) {
+                playerCard = 10
+            } else {
+            }
+            
+//This is where the addition is done for the actual score, adding in the result of the above code to the score.
+        playerScore += playerCard;
+        document.getElementById("playerScoreDisplay").value = playerScore;
+//Defines the loss function, essentially, get over 21 and it will automatically end the game here.
+//Thus triggering the 'gameEnd' function.
+        if (playerScore > 21) {
+            gameEnd("lose");
+        }
+}
+
+//Essentially, disables the buttons and starts running the dealer (dealer)
+function stand() {
+
+disableButtons();
+dealerDecision();
+
+}
+//Dealer equals dealer in this code, we did so to make it fit better with the idea to code in an actual identity for the dealer.
+function dealerHit() {
+while (dealerScore < playerScore || (playerScore == dealerScore && dealerScore <= 11)) {
+            
+        var dealerCard = pickCard();
+        displayCard(dealerCard, "dealerCard")
+
+        if (dealerCard > 10) {
+            dealerCard = 10
+    }
+        dealerScore += dealerCard;    
+        document.getElementById("dealerScoreDisplay").value = dealerScore;
+    }
+        
+//This portion of the function is essentially related to the result of the player's round.
+//It's based on the scores recieved and based on those scores it compares and generates a result. 
+//This is the backbone of the game itself.
+    if (dealerScore > playerScore && dealerScore <= 21) {
+        gameEnd("lose");
+    } else if (dealerScore < playerScore || dealerScore > 21) {
+        gameEnd("win");
+    } else if (dealerScore == playerScore) {
+        gameEnd("tie");
+    }
+
+}
+
+function nextGame() {
+
+playerCardNum = 0;
+dealerCardNum = 0;
+playerScore = 0;
+dealerScore = 0;  
+document.getElementById("playerCardDisplay").value = "";
+document.getElementById("playerScoreDisplay").value = "";
+document.getElementById("dealerCardDisplay").value = "";
+document.getElementById("dealerScoreDisplay").value = "";
+document.getElementById("winLoseDisplay").innerHTML = "You...";
+document.getElementById("hitButton").disabled = false;
+document.getElementById("standButton").disabled = false;
+document.getElementById("nextGameButton").style.visibility = "hidden";
+
+for (i=1; i <=10; i++) {
+    document.getElementById("playerCardImage" + i).src = "deck/backside/backside1.png";
+    if (i == 10) {
+        for (i=1; i <=10; i++) {
+            document.getElementById("dealerCardImage" + i).src = "deck/backside/backside1.png";
+        }
+    }
+}
+}
+
+function resetButton () {
+
+    if (resetButton == true) {
+    playerCardNum = 0;
+    dealerCardNum = 0;
+    playerScore = 0;
+    dealerScore = 0; 
+    playerPoints = 0;
+    dealerPoints = 0;
+    document.getElementById("playerCardDisplay").value = "";
+    document.getElementById("playerScoreDisplay").value = "";
+    document.getElementById("dealerCardDisplay").value = "";
+    document.getElementById("dealerScoreDisplay").value = "";
+    document.getElementById("playerPointsDisplay").value = "";
+    document.getElementById("dealerPointsDisplay").value = "";
+    document.getElementById("moneyDisplay").value = "";
+    document.getElementById("playerBetDisplay").value = "";
+    document.getElementById("dealerNameDisplay").value = "";
+    
+    document.getElementById("hitButton").disabled = false;
+    document.getElementById("standButton").disabled = false;
+    document.getElementById("nextGameButton").style.visibility = "hidden";
+    document.getElementById("winLoseDisplay").innerHTML = "";
+    }
+
+}
+
+//ends the game, changes score and displays whether you win, lose, or tie based off the state
+function gameEnd(state) {
+
+disableButtons();
+document.getElementById("nextGameButton").style.visibility = "visible";
+
+if (state == "lose") {
+    document.getElementById("winLoseDisplay").innerHTML = "You Lost";
+    dealerPoints ++;
+    document.getElementById("dealerPointsDisplay").value = dealerPoints;
+} else if (state == "win") {
+    document.getElementById("winLoseDisplay").innerHTML = "You Won";
+    playerPoints ++;
+    document.getElementById("playerPointsDisplay").value = playerPoints;
+} else if (state == "tie") {
+    document.getElementById("winLoseDisplay").innerHTML = "You Tied";
+    dealerPoints += 0.5;
+    playerPoints += 0.5;
+    document.getElementById("playerPointsDisplay").value = playerPoints;
+    document.getElementById("dealerPointsDisplay").value = dealerPoints;
+}
+
+}
+//disables the hit and stand buttons for the dealers turn
+function disableButtons() {
+
+document.getElementById("hitButton").disabled = true;
+document.getElementById("standButton").disabled = true;
+
+}
+
+</script>
+
+</body>
+
+<form>
+<!--Within this code it sets-->
+
+<p id="playerDisplays">
+    Player Card: <input type="text" id="playerCardDisplay" readonly>
+
+    Player Score: <input type="text" id="playerScoreDisplay" readonly>
+</p>
+
+<p id="dealerDisplays">
+    Dealer Card: <input type="text" id="dealerCardDisplay" readonly>
+
+    Dealer Score: <input type="text" id="dealerScoreDisplay" readonly>
+
+</p>
+
+<p id="pointsDisplay">
+    Your Points: <input type="text" id="playerPointsDisplay" readonly>
+
+    Dealer's Points: <input type="text" id="dealerPointsDisplay" readonly>
+</p>
+
+<p id="playerBetDisplays">
+    Player Bet: <input type="text" id="playerBetDisplay" readonly>
+
+    Money: <input type="text" id="moneyDisplay" readonly>
+
+</p>
+
+<p id="playerDisplays">
+    Your Dealer's Name is: <input type="text" id="dealerName" readonly>
+
+</p>
+
+<input type="button" value="Hit" id="hitButton" onClick="playerHit();">
+<input type="button" Value="Stand" id="standButton" onClick="dealerHit();">
+<input type="button" Value="Next Game" id="nextGameButton" onClick="nextGame();">
+<input type="button" Value="Reset" id="resetButton" onClick="resetButton(); hideButton();">
+</form>
+
+<form name="buttons">
+    <p id="cardsName">Your Cards:</p> 
+    <img id="playerCardImage1" src="" height="150">
+    <img id="playerCardImage2" src="" height="150">
+    <img id="playerCardImage3" src="" height="150">
+    <img id="playerCardImage4" src="" height="150">
+    <img id="playerCardImage5" src="" height="150">
+    <img id="playerCardImage6" src="" height="150">
+    <img id="playerCardImage7" src="" height="150">
+    <img id="playerCardImage8" src="" height="150">
+    <img id="playerCardImage9" src="" height="150">
+    <img id="playerCardImage10" src="" height="150"><br>
+    <p id="cardsName">Dealer Cards:</p>
+    <img id="dealerCardImage1" src="" height="150">
+    <img id="dealerCardImage2" src="" height="150">
+    <img id="dealerCardImage3" src="" height="150">
+    <img id="dealerCardImage4" src="" height="150">
+    <img id="dealerCardImage5" src="" height="150">
+    <img id="dealerCardImage6" src="" height="150">    
+    <img id="dealerCardImage7" src="" height="150">
+    <img id="dealerCardImage8" src="" height="150">
+    <img id="dealerCardImage9" src="" height="150">
+    <img id="dealerCardImage10" src="" height="150"><br>
+
+</form>
+</html>
